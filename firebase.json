@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "birding",
     "source": ".",
     "ignore": [
       "firebase.json",
