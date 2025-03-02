@@ -147,7 +147,7 @@ function App() {
       </div>
       <p className="read-the-docs">
         {/* Click on the Vite and React logos to learn more */}
-        <a target="_blank" href='https://github.com/neilghosh/birds-id-indian-lang '>Code Repo </a>
+        <a target="_blank" href='https://github.com/neilghosh/test-react'>Code Repo </a>
         <br />
         <a target="_blank" href='https://medium.com/google-cloud/bird-identification-with-gemini-api-c6af7cfc6532'>Medium Article</a>
 
