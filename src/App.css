@@ -52,6 +52,10 @@
   text-align: left;
 }
 
+.centre {
+  text-align: left;
+}
+
 .images {
   display: block;
   margin-left: auto;

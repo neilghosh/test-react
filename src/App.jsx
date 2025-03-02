@@ -51,7 +51,7 @@ function App() {
         'Content-Type': 'multipart/form-data'
       },
       onUploadProgress: progressEvent => {
-        setProgress((progressEvent.loaded / progressEvent.total) * 100);
+        setProgress(((progressEvent.loaded / progressEvent.total) * 100).toFixed(0));
       },
       onDownloadProgress: progressEvent => {
         setDownloadProgress((progressEvent.loaded / progressEvent.total) * 100);
@@ -71,8 +71,8 @@ function App() {
   return (
     <>
       <div>
-        <h1>Bird ID - Indian Languages </h1>
-        <p>Upload or Paste your bird image here</p>
+        <h1>Bird Identification - Indian Languages </h1>
+        <p>Upload or Paste (Ctrl + V) your bird image here</p>
         {/* <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a> */}
@@ -83,7 +83,7 @@ function App() {
 
       <div className="card">
 
-        <input type="file" onChange={handleChangeFile.bind(this)} ref={inputRef}></input>
+        <input type="file" accept="image/*" onChange={handleChangeFile.bind(this)} ref={inputRef}></input>
         {/* 
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
@@ -114,32 +114,34 @@ function App() {
         }
         <hr />
         {response &&
-          <div> {response.message}
+          <div className="centre"> {response.message}
+            <br/><br/>
             {/* <p>Download  : <a target="_blank" href={response.location}>{response.filename}</a></p> */}
-            <table>
-              <tbody>
-                <tr>
-
-                  <td className="titles">Bird Name  : </td>
-                  <td className="values"><b>{response.birdData.bird_name}</b></td>
-                </tr>
-                <tr>
-
-                  <td className="titles">Scientific  Name  : </td>
-                  <td className="values"><b>{response.birdData.scientific_name}</b></td>
-                </tr>
-
-                {response.birdData.indian_languages.map(lang => (
+            {response.birdData &&
+            <div className="centre"> 
+              <table align="left">
+                <tbody>
                   <tr>
-
-                    <td className="titles">{lang.language}:</td>
-                    <td className="values"><b>{lang.value}</b></td>
+                    <td className="titles">Bird Name  : </td>
+                    <td className="values"><b>{response.birdData.bird_name}</b></td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            <img className="images" height="auto" src={`data:image/png;base64,${response.imgBuffer}`} alt="Bird Image" />
-          </div>
+                  <tr>
+                    <td className="titles">Scientific  Name  : </td>
+                    <td className="values"><b>{response.birdData.scientific_name}</b></td>
+                  </tr>
+
+                  {response.birdData.indian_languages.map(lang => (
+                    <tr>
+                      <td className="titles">{lang.language}:</td>
+                      <td className="values"><b>{lang.value}</b></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              </div>
+            }{response.imgBuffer &&
+              <img className="images" height="auto" src={`data:image/png;base64,${response.imgBuffer}`} alt="Bird Image" />
+            }</div>
         }
 
       </div>
@@ -148,7 +150,9 @@ function App() {
         <a target="_blank" href='https://github.com/neilghosh/birds-id-indian-lang '>Code Repo </a>
         <br />
         <a target="_blank" href='https://medium.com/google-cloud/bird-identification-with-gemini-api-c6af7cfc6532'>Medium Article</a>
+
       </p>
+      Copyright Neil Ghosh 2025
     </>
   )
 }
