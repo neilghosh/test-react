@@ -7,16 +7,22 @@ import './App.css'
 function App() {
   const [count, setCount] = useState(0)
   const [progress, setProgress] = useState(null)
+  const [preview, setPreview] = useState(null)
   const [downloadProgress, setDownloadProgress] = useState(null)
 
   const [response, setResponse] = useState(null);
   const inputRef = useRef(null);
   const [file, setFile] = useState(null);
+  window.addEventListener('paste', e => {
+    setFile(e.clipboardData.files[0]);
+  });
   const handleChangeFile = (event) => {
     console.log("Set the selected file");
     setFile(event.target.files[0]);
     //Make a request to server and send formData
   }
+
+
   //Replacement of  onChange={handleChangeFile.bind(this)} 
   // React.useEffect(() => {
   //   const inputElement = inputRef.current;
@@ -28,13 +34,19 @@ function App() {
   useEffect(() => {
     console.log('current file selected to', file);
     if (!file) return;
+
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(file);
+    fileReader.addEventListener("load", function () {
+      setPreview(this.result);
+    });
+
+
     let formData = new FormData();
-    formData.append('file', file);
-
-
+    formData.append('img', file);
 
     //console.log(inputRef.current);
-    axios.post('https://api.escuelajs.co/api/v1/files/upload', formData, {
+    axios.post('https://idx-simple-node-3987408-b3zzuedwgq-el.a.run.app/api', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       },
@@ -50,6 +62,11 @@ function App() {
       .catch(error => {
         console.error(error);
       });
+    return () => {
+      setProgress(null);
+      setDownloadProgress(null);
+      setResponse(null);
+    }
   }, [file]);
   return (
     <>
@@ -71,12 +88,22 @@ function App() {
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button> */}
+        {preview &&
+          <div>
+            <p>Preview</p>
 
+            <img className="images" height="auto" src={preview} alt="Bird Preview" />
+          </div>
+        }
         {file &&
-          <div> Selected file with following details being uploaded...
+
+          <div> <p>Selected file with following details being uploaded...</p>
+
+            <hr />
+
             <p>Name : {file.name}</p>
-            <p>Last Modified : {file.lastModified}</p>
-            <p>Size : {file.size}</p>
+            <p>Last Modified : {new Date(file.lastModified).toISOString()}</p>
+            <p>Size : {(file.size / 1024 / 1024).toFixed(2)} MB</p>
           </div>
         }
         {progress &&
@@ -85,17 +112,36 @@ function App() {
         {downloadProgress &&
           <p>Download Progress : {downloadProgress} %</p>
         }
+        <hr />
         {response &&
-          <div> Response from server ...
-            <p>Download  : <a target="_blank" href={response.location}>{response.filename}</a></p>
-          </div>
+          <div> {response.message}
+            {/* <p>Download  : <a target="_blank" href={response.location}>{response.filename}</a></p> */}
+            <table>
+              <tbody>
+                <tr>
 
+                  <td className="titles">Bird Name  : </td>
+                  <td className="values"><b>{response.birdData.bird_name}</b></td>
+                </tr>
+                <tr>
+
+                  <td className="titles">Scientific  Name  : </td>
+                  <td className="values"><b>{response.birdData.scientific_name}</b></td>
+                </tr>
+
+                {response.birdData.indian_languages.map(lang => (
+                  <tr>
+
+                    <td className="titles">{lang.language}:</td>
+                    <td className="values"><b>{lang.value}</b></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <img className="images" height="auto" src={`data:image/png;base64,${response.imgBuffer}`} alt="Bird Image" />
+          </div>
         }
-        {/* <ul>
-          {posts.map(post => (
-            <li key={post.id}>{post.title}</li>
-          ))}
-        </ul> */}
+
       </div>
       <p className="read-the-docs">
         {/* Click on the Vite and React logos to learn more */}

@@ -1,0 +1,6 @@
+{
+  "firebase_hosting": {
+    "deploymentHostingUrl": "https://birding.web.app"
+  },
+  "cloud_run_deploy": {}
+}
